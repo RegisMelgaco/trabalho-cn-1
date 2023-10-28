@@ -131,10 +131,8 @@ int linear_system() {
     }
 
     for (i = 0; i < n; i++) {
-        double p = matrix[i][i];
-
         // se pivo nulo, tentar trocar coluna de coeficientes i a direita que tenha um valor não nulo na linha i
-        if (abs(p) < EPSILON) {
+        if (abs(matrix[i][i]) < EPSILON) {
             // busca pela coluna
             j = i+1;
             while (j < n && abs(matrix[i][j]) < EPSILON) j++;
@@ -143,7 +141,7 @@ int linear_system() {
             if (j == n) {
                 double b = matrix[i][n];
 
-                if (abs(b) < EPSILON) {
+                if (abs(b) > EPSILON) {
                     printf("O sistema linear é incompatível");
 
                     return 0;
@@ -171,13 +169,15 @@ int linear_system() {
             }
         }
 
-        if (abs(p) > EPSILON) {
+        // pivotar se possível
+        if (abs(matrix[i][i]) > EPSILON) {
+            printf("pivotando linha %d\n", i);
             for (j = 0; j < n; j++) {
                 if (j == i) {
                     continue;
                 }
 
-                double c = -matrix[j][i]/p;
+                double c = -matrix[j][i]/matrix[i][i];
                 for (k = 0; k <= n; k++) {
                     matrix[j][k] += matrix[i][k] * c;
                 }
