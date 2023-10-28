@@ -271,7 +271,7 @@ char toPrintChar(char c) {
     return 'Z';
 }
 
-const int MAX_RES_FRACTION = 20;
+const int MAX_RES_FRACTION = 10;
 
 void baseConversion(int base, double num) {
     int integer = floor(num);
