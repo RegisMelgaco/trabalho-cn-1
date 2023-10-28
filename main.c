@@ -200,6 +200,133 @@ int linear_system() {
     return 0;
 }
 
+
+char toPrintChar(char c) {
+    if (c == 0) {
+        return '0';
+    }
+
+    if (c == 1) {
+        return '1';
+    }
+
+    if (c == 2) {
+        return '2';
+    }
+
+    if (c == 3) {
+        return '3';
+    }
+
+    if (c == 4) {
+        return '4';
+    }
+
+    if (c == 5) {
+        return '5';
+    }
+
+    if (c == 6) {
+        return '6';
+    }
+
+    if (c == 7) {
+        return '7';
+    }
+
+    if (c == 8) {
+        return '8';
+    }
+
+    if (c == 9) {
+        return '9';
+    }
+
+    if (c == 10) {
+        return 'A';
+    }
+
+    if (c == 11) {
+        return 'B';
+    }
+
+    if (c == 12) {
+        return 'C';
+    }
+
+    if (c == 13) {
+        return 'D';
+    }
+
+    if (c == 14) {
+        return 'E';
+    }
+
+    if (c == 15) {
+        return 'F';
+    }
+
+    printf("<%d>", c);
+
+    return 'Z';
+}
+
+const int MAX_RES_FRACTION = 20;
+
+void baseConversion(int base, double num) {
+    int integer = floor(num);
+    double fraction = num - integer;
+
+    int i;
+
+    int int_len;
+    for (int_len = 0; pow(base, int_len) < integer; int_len++) {}
+
+    char *res_integer = malloc(sizeof(char) * int_len);
+    for (i = 0; i < 0; i++) {
+        res_integer[i] = 0;
+    }
+
+    char res_fraction[MAX_RES_FRACTION];
+    for (i = 0; i < MAX_RES_FRACTION; i++) {
+        res_fraction[i] = 0;
+    }
+
+    for(i = int_len-1; integer >= base; i--) {
+        res_integer[i] = integer%base;
+        integer = (integer-res_integer[i]) / base;
+    }
+    res_integer[0] = integer;
+
+    for(i = 0; fraction > 0 && i < MAX_RES_FRACTION; i++){
+      fraction *= base;
+      integer = floor(fraction);
+
+      res_fraction[i] = integer;
+
+      fraction -= integer;
+    }
+
+    printf("base %d = ", base);
+
+    for (i = 0; i < int_len; i++) {
+        printf("%c", toPrintChar(res_integer[i]));
+    }
+    printf(",");
+    for (i = 0; i < MAX_RES_FRACTION; i++) {
+        printf("%c", toPrintChar(res_fraction[i]));
+    }
+
+    printf("\n");
+
+    free(res_integer);
+}
+
+void cleanBuffer() {
+    char c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+}
+
 /*
 main retorna os seguintes códigos de encerramento:
 0 - sucesso
@@ -209,17 +336,25 @@ main retorna os seguintes códigos de encerramento:
 4 - não implementado
 */
 int main() {
-    char option, c;
+    char option;
 
-    printf("Escolha uma opção de operação:\n\n('C') - Conversão\n('S') - Sistema Linear\n('E') - Equação Algébrica\n('F') - Finalizar\n\nOpção> ");
+    printf("Escolha uma opção de operação:\n\n('C') - Conversão\n('S') - Sistema Linear\n('E') - Equação Algébrica\n('F') - Finalizar\n\nOpção > ");
 
     option = getc(stdin);
 
-    // clean buff
-    while ((c = getchar()) != '\n' && c != EOF) {}
+    cleanBuffer();
 
     if (option == 'C' || option ==  'c') {
-        printf("Não implementado");
+        printf("numero > ");
+
+        double num;
+        scanf("%lf", &num);
+
+        cleanBuffer();
+
+        baseConversion(2, num);
+        baseConversion(8, num);
+        baseConversion(16, num);
 
         return 3;
     } else if (option == 'S' || option ==  's') {
