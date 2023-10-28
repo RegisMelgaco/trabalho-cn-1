@@ -6,7 +6,6 @@
 #define EPSILON 0.000001
 
 
-
 /*
 * make_matrix aloca uma matriz com l linhas e c colunas em m.
 * caso haja falha na alocação da matriz, será desalocado todo o espaço de memória alocado e retornado 1.
@@ -62,39 +61,6 @@ void free_matrix(double** m, int l) {
 	free(m);
 }
 
-/*
-* s_retro retorna um int que prese
-* m é uma matriz aumentada de um SL com n variáveis.
-* se compatível, a ou uma resposta será gravada em x.
-* se determinado será retornado 0.
-* se indeterminado será retornado 1.
-* se incompatível será retornado 2.
-*/
-int s_retro(double **m, int n, double x[]){
-	int i, j, kind = 0;
-	double sum = 0;
-	
-	for (i = n-1; i >= 0; i--) {
-		sum = 0;
-		for (j = i+1; j < n; j++) {
-			sum += m[i][j]*x[j];
-		}
-		
-		if (m[i][i] == 0) {
-			if (fabs(m[i][n] - sum) < EPSILON) {
-				kind = 1; // variável lívre
-				x[i] = 0;
-			} else {
-				return 2;
-			}
-		} else {
-			x[i] = m[i][n] - sum / m[i][i];
-		}
-	}
-	
-	return kind;
-}
-
 void print_matrix(double **m, int l, int c) {
 	int i, j;
 	for (i = 0; i < l; i++) {
@@ -115,9 +81,6 @@ int linear_system() {
 
 
     printf("Qual o nome do arquivo que contem o sistema linear? ");
-
-    // clean buff
-    while ((c = getchar()) != '\n' && c != EOF) {}
 
     if(fgets(file_name, 100, stdin) == NULL) {
       printf("falha ao ler entrada");
@@ -171,16 +134,16 @@ int linear_system() {
         double p = matrix[i][i];
 
         // se pivo nulo, tentar trocar coluna de coeficientes i a direita que tenha um valor não nulo na linha i
-        if (p == 0) {
+        if (abs(p) < EPSILON) {
             // busca pela coluna
             j = i+1;
-            while (j < n && matrix[i][j] == 0) j++;
+            while (j < n && abs(matrix[i][j]) < EPSILON) j++;
 
             // caso coluna não seja encontrada, verificar se o sistema linear é incompatível
             if (j == n) {
                 double b = matrix[i][n];
 
-                if (b != 0) {
+                if (abs(b) < EPSILON) {
                     printf("O sistema linear é incompatível");
 
                     return 0;
@@ -208,19 +171,22 @@ int linear_system() {
             }
         }
 
-        for (j = 0; j < n; j++) {
-            if (j == i) {
-                continue;
-            }
+        if (abs(p) > EPSILON) {
+            for (j = 0; j < n; j++) {
+                if (j == i) {
+                    continue;
+                }
 
-            double c = -matrix[j][i]/p;
-            for (k = 0; k <= n; k++) {
-                matrix[j][k] += matrix[i][k] * c;
+                double c = -matrix[j][i]/p;
+                for (k = 0; k <= n; k++) {
+                    matrix[j][k] += matrix[i][k] * c;
+                }
             }
         }
     }
 
     print_matrix(matrix, n, n+1);
+
     for (i = 0; i < n; i++) {
         if (matrix[i][i] == 0) {
             printf("x(%d) = %d (variavel livre)\n",xs_positions[i], 0);
@@ -229,6 +195,8 @@ int linear_system() {
 
         printf("x(%d) = %lf\n", xs_positions[i], matrix[i][n] / matrix[i][i]);
     }
+
+    free_matrix(matrix, n);
 
     return 0;
 }
@@ -242,11 +210,14 @@ main retorna os seguintes códigos de encerramento:
 4 - não implementado
 */
 int main() {
-    char option;
+    char option, c;
 
     printf("Escolha uma opção de operação:\n\n('C') - Conversão\n('S') - Sistema Linear\n('E') - Equação Algébrica\n('F') - Finalizar\n\nOpção> ");
 
     option = getc(stdin);
+
+    // clean buff
+    while ((c = getchar()) != '\n' && c != EOF) {}
 
     if (option == 'C' || option ==  'c') {
         printf("Não implementado");
