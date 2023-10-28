@@ -65,10 +65,10 @@ void print_matrix(double **m, int l, int c) {
 	int i, j;
 	for (i = 0; i < l; i++) {
 	  	for (j = 0; j < c; j++) {
-			printf("m[%d][%d] %10.3lf \n", i, j, m[i][j]);
+			printf("%10.3lf,", m[i][j]);
 		}
 		
-		printf(";\n");
+		printf("\n");
 	}
 }
 
@@ -171,7 +171,6 @@ int linear_system() {
 
         // pivotar se possível
         if (abs(matrix[i][i]) > EPSILON) {
-            printf("pivotando linha %d\n", i);
             for (j = 0; j < n; j++) {
                 if (j == i) {
                     continue;
